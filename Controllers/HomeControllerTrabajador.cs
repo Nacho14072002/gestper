@@ -59,10 +59,13 @@ namespace Gestper.Controllers
             var usuario = await _context.Usuarios
                 .Include(u => u.Departamento)
                 .FirstOrDefaultAsync(u => u.IdUsuario == idUsuario);
+            var bitacoras = await _context.Bitacora
+                .OrderByDescending(b => b.FechaCreacion)
+                .ToListAsync();
 
             ViewBag.DepartamentoNombre = usuario?.Departamento?.Nombre ?? "Sin departamento";
 
-            return View("~/Views/Home/Index_Trabajador.cshtml", tickets);
+            return View("~/Views/Home/Index_Trabajador.cshtml", (Tickets: tickets, Bitacoras: bitacoras));
         }
 
         public async Task<IActionResult> Detalle(int id)
@@ -124,6 +127,19 @@ namespace Gestper.Controllers
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Login", "Usuario");
+        }
+        
+        public async Task<IActionResult> Bitacora()
+        {
+            if (HttpContext.Session.GetString("UsuarioRol") != "2")
+                return RedirectToAction("Login", "Usuario");
+
+            var bitacoras = await _context.Bitacora
+                .Include(b => b.Usuario)
+                .OrderByDescending(b => b.FechaCreacion)
+                .ToListAsync();
+
+            return View("~/Views/Home/Bitacora.cshtml", bitacoras);
         }
     }
 }
