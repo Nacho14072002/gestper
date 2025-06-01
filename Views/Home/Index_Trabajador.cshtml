@@ -297,20 +297,22 @@
                     <table class="tickets-table">
                         <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>ID Usuario</th>
                             <th>Descripción</th>
-                            <th>Acción</th>
+                            <th>Usuario</th>
                             <th>Fecha de Creación</th>
+                            <th>Acción</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach (var bitacora in Model.Bitacoras)
                         {
                             <tr>
-                                <td>@bitacora.IdUsuario</td>
                                 <td>@bitacora.Descripcion</td>
+                                <td>@bitacora.Usuario.Nombre @bitacora.Usuario.Apellido</td>
                                 <td>@bitacora.FechaCreacion.ToString("dd-MM-yyyy HH:mm")</td>
+                                <td>
+                                    <a href="@Url.Action("DetalleBitacora", "Trabajador", new { id = bitacora.Id })" class="btn btn-primary">Ver detalles</a>
+                                </td>
                             </tr>
                         }
                         </tbody>
