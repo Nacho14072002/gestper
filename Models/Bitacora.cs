@@ -26,5 +26,14 @@ namespace Gestper.Models
         
         [ForeignKey("IdUsuario")]
         public Usuario Usuario { get; set; }
+        
+        public int? IdSoporteAsignado { get; set; }
+
+        [ForeignKey("IdSoporteAsignado")]
+        public Usuario SoporteAsignado { get; set; }
+        
+        public string Prioridad { get; set; }
+        
+        public string Estado { get; set; }
     }
 }
