@@ -3,8 +3,6 @@ using Gestper.Models;
 using Gestper.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc.Rendering;
-
 
 namespace Gestper.Controllers
 {
@@ -62,7 +60,6 @@ namespace Gestper.Controllers
                 .Include(u => u.Departamento)
                 .FirstOrDefaultAsync(u => u.IdUsuario == idUsuario);
             var bitacoras = await _context.Bitacora
-                .Include(b => b.Usuario)
                 .OrderByDescending(b => b.FechaCreacion)
                 .ToListAsync();
 
@@ -143,68 +140,6 @@ namespace Gestper.Controllers
                 .ToListAsync();
 
             return View("~/Views/Home/Bitacora.cshtml", bitacoras);
-        }
-        
-        public async Task<IActionResult> DetalleBitacora(int id)
-        {
-            if (HttpContext.Session.GetString("UsuarioRol") != "2")
-                return RedirectToAction("Login", "Usuario");
-
-            var bitacora = await _context.Bitacora
-                .Include(b => b.Usuario)
-                .FirstOrDefaultAsync(b => b.Id == id);
-
-            if (bitacora == null)
-                return NotFound();
-
-            var trabajadores = await _context.Usuarios
-                .Where(u => u.IdRol == 2)
-                .ToListAsync();
-
-            var listaTrabajadores = trabajadores
-                .Select(t => new SelectListItem
-                {
-                    Value = t.IdUsuario.ToString(),
-                    Text = $"{t.Nombre} {t.Apellido}"
-                }).ToList();
-
-            var prioridades = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "Baja", Text = "Baja" },
-                new SelectListItem { Value = "Media", Text = "Media" },
-                new SelectListItem { Value = "Alta", Text = "Alta" }
-            };
-
-            var estados = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "Abierto", Text = "Abierto" },
-                new SelectListItem { Value = "En proceso", Text = "En proceso" },
-                new SelectListItem { Value = "Resuelto", Text = "Resuelto" },
-                new SelectListItem { Value = "Cerrado", Text = "Cerrado" }
-            };
-
-            ViewBag.Trabajadores = listaTrabajadores;
-            ViewBag.Prioridades = prioridades;
-            ViewBag.Estados = estados;
-
-            return View("~/Views/Home/DetalleBitacora.cshtml", bitacora);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> GuardarDetalleBitacora(Bitacora bitacora)
-        {
-            var bitacoraExistente = await _context.Bitacora.FindAsync(bitacora.Id);
-            if (bitacoraExistente == null)
-                return NotFound();
-
-            bitacoraExistente.Descripcion = bitacora.Descripcion;
-            bitacoraExistente.Prioridad = bitacora.Prioridad;
-            bitacoraExistente.Estado = bitacora.Estado;
-
-            await _context.SaveChangesAsync();
-
-            TempData["Mensaje"] = "Bitácora actualizada correctamente";
-            return RedirectToAction("Index");
         }
     }
 }
