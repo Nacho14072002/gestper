@@ -101,18 +101,5 @@ namespace Gestper.Controllers
             TempData["MensajeExito"] = "Ticket actualizado correctamente";
             return RedirectToAction("Index", "HomeControllerAdmin");
         }
-        
-        public async Task<IActionResult> Bitacora()
-        {
-            if (HttpContext.Session.GetString("UsuarioRol") != "1")
-                return RedirectToAction("Login", "Usuario");
-
-            var bitacoras = await _context.Bitacora
-                .Include(b => b.Usuario)
-                .OrderByDescending(b => b.FechaCreacion)
-                .ToListAsync();
-
-            return View("~/Views/Home/Bitacora.cshtml", bitacoras);
-        }
     }
 }
