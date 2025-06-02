@@ -1,0 +1,17 @@
+@{
+    ViewData["Title"] = "Agregar Seguimiento";
+    var idTicket = ViewBag.IdTicket;
+}
+
+<h2>Agregar Seguimiento</h2>
+
+<form asp-action="Create" method="post">
+    <input type="hidden" name="idTicket" value="@idTicket" />
+
+    <div class="form-group">
+        <label>Comentario:</label>
+        <textarea name="comentario" class="form-control" rows="4" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-3">Guardar Comentario</button>
+</form>
