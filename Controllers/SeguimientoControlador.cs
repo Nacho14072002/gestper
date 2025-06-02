@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Gestper.Data;
 using Gestper.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Gestper.Controllers
 {
@@ -13,19 +12,24 @@ namespace Gestper.Controllers
         {
             _context = context;
         }
+        
+        public IActionResult Index(int idTicket)
+        {
+            return RedirectToAction("Create", new { idTicket });
+        }
 
-        // GET: Mostrar formulario de seguimiento
+        [HttpGet]
         public IActionResult Create(int idTicket)
         {
             ViewBag.IdTicket = idTicket;
             return View();
         }
 
-        // POST: Guardar seguimiento
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int idTicket, string comentario)
         {
+            // Aquí tomamos el idUsuario desde la sesión correctamente
             var idUsuario = HttpContext.Session.GetInt32("UsuarioId");
 
             if (idUsuario == null)
